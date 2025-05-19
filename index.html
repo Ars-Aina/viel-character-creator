@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Creator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4fc3f7;
+            --secondary: #4db6ac;
+            --light: #e0f7fa;
+            --dark: #00796b;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--light), var(--white));
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            color: var(--dark);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .editor-panel, .preview-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-title {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .avatar-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: var(--light);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            color: var(--dark);
+            font-size: 3rem;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #039be5;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #00897b;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .examples-list {
+            margin-top: 15px;
+        }
+
+        .example-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: flex-start;
+        }
+
+        .example-item textarea {
+            flex: 1;
+        }
+
+        .add-example {
+            background-color: var(--light);
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .add-example:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .remove-example {
+            background-color: #ffcdd2;
+            color: #c62828;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .remove-example:hover {
+            background-color: #ef9a9a;
+        }
+
+        .preview-content {
+            padding: 20px;
+            border-radius: 5px;
+            background-color: var(--light);
+        }
+
+        .preview-section {
+            margin-bottom: 15px;
+        }
+
+        .preview-section h3 {
+            color: var(--dark);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-section h3 i {
+            color: var(--primary);
+        }
+
+        .preview-text {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .examples-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .example-preview-item {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Character Creator</h1>
+            <p class="subtitle">Design your perfect AI character with this cute creator!</p>
+        </header>
+
+        <div class="main-content">
+            <div class="editor-panel">
+                <h2 class="panel-title"><i class="fas fa-edit"></i> Character Editor</h2>
+
+                <div class="form-group">
+                    <label for="character-name">Character Name</label>
+                    <input type="text" id="character-name" placeholder="Enter character name">
+                </div>
+
+                <div class="form-group">
+                    <label for="persona">Persona</label>
+                    <textarea id="persona" placeholder="Describe your character's personality, appearance, and behavior"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="avatar-url">Avatar URL</label>
+                    <input type="text" id="avatar-url" placeholder="Paste an image URL for your character">
+                </div>
+
+                <div class="form-group">
+                    <label for="instructions">Instructions</label>
+                    <textarea id="instructions" placeholder="How should this character behave? Any special instructions?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Examples</label>
+                    <div class="examples-list" id="examples-list">
+                        <!-- Examples will be added here -->
+                    </div>
+                    <div class="add-example" id="add-example">
+                        <i class="fas fa-plus"></i> Add Example
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="info">Additional Info</label>
+                    <textarea id="info" placeholder="Any additional information about your character"></textarea>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="new-character">
+                        <i class="fas fa-file"></i> New
+                    </button>
+                    <button class="btn btn-outline" id="import-character">
+                        <i class="fas fa-file-import"></i> Import
+                    </button>
+                    <button class="btn btn-secondary" id="export-character">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
+                </div>
+
+                <input type="file" id="file-input" class="file-input" accept=".json">
+            </div>
+
+            <div class="preview-panel">
+                <h2 class="panel-title"><i class="fas fa-eye"></i> Character Preview</h2>
+
+                <div class="avatar-preview" id="avatar-preview">
+                    <div class="avatar-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="preview-content">
+                    <div class="preview-section">
+                        <h3><i class="fas fa-tag"></i> Name</h3>
+                        <p class="preview-text" id="preview-name">No name set</p>
+                    </div>
+
+                    <div class="preview-section">
+                        <h3><i class="fas fa-user"></i> Persona</h3>
+                        <p class="preview-text" id="preview-persona">No persona set</p>
+                    </div>
+
+                    <div class="preview-section">
+                        <h3><i class="fas fa-comment"></i> Instructions</h3>
+                        <p class="preview-text" id="preview-instructions">No instructions set</p>
+                    </div>
+
+                    <div class="preview-section">
+                        <h3><i class="fas fa-comments"></i> Examples</h3>
+                        <div class="examples-preview" id="preview-examples">
+                            <p class="preview-text">No examples added</p>
+                        </div>
+                    </div>
+
+                    <div class="preview-section">
+                        <h3><i class="fas fa-info-circle"></i> Additional Info</h3>
+                        <p class="preview-text" id="preview-info">No additional info</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const nameInput = document.getElementById('character-name');
+            const personaInput = document.getElementById('persona');
+            const avatarUrlInput = document.getElementById('avatar-url');
+            const instructionsInput = document.getElementById('instructions');
+            const infoInput = document.getElementById('info');
+            const examplesList = document.getElementById('examples-list');
+            const addExampleBtn = document.getElementById('add-example');
+            const newCharacterBtn = document.getElementById('new-character');
+            const importCharacterBtn = document.getElementById('import-character');
+            const exportCharacterBtn = document.getElementById('export-character');
+            const fileInput = document.getElementById('file-input');
+
+            // Preview Elements
+            const previewName = document.getElementById('preview-name');
+            const previewPersona = document.getElementById('preview-persona');
+            const previewInstructions = document.getElementById('preview-instructions');
+            const previewExamples = document.getElementById('preview-examples');
+            const previewInfo = document.getElementById('preview-info');
+            const avatarPreview = document.getElementById('avatar-preview');
+
+            // Update preview when inputs change
+            nameInput.addEventListener('input', updatePreview);
+            personaInput.addEventListener('input', updatePreview);
+            avatarUrlInput.addEventListener('input', updateAvatarPreview);
+            instructionsInput.addEventListener('input', updatePreview);
+            infoInput.addEventListener('input', updatePreview);
+
+            // Add example dialog
+            addExampleBtn.addEventListener('click', function() {
+                const exampleItem = document.createElement('div');
+                exampleItem.className = 'example-item';
+                
+                const textarea = document.createElement('textarea');
+                textarea.placeholder = 'Enter example conversation';
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-example';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.addEventListener('click', function() {
+                    exampleItem.remove();
+                    updatePreview();
+                });
+                
+                exampleItem.appendChild(textarea);
+                exampleItem.appendChild(removeBtn);
+                examplesList.appendChild(exampleItem);
+                
+                textarea.addEventListener('input', updatePreview);
+            });
+
+            // New character
+            newCharacterBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to create a new character? All unsaved changes will be lost.')) {
+                    resetForm();
+                }
+            });
+
+            // Import character
+            importCharacterBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const characterData = JSON.parse(e.target.result);
+                        loadCharacterData(characterData);
+                    } catch (error) {
+                        alert('Error reading file. Please make sure it is a valid JSON file.');
+                        console.error(error);
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            // Export character
+            exportCharacterBtn.addEventListener('click', function() {
+                const characterData = getCharacterData();
+                if (!characterData.name) {
+                    alert('Please give your character a name before exporting.');
+                    return;
+                }
+
+                const dataStr = JSON.stringify(characterData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `${characterData.name.toLowerCase().replace(/\s+/g, '-')}-character.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            });
+
+            // Helper functions
+            function updatePreview() {
+                const data = getCharacterData();
+                
+                previewName.textContent = data.name || 'No name set';
+                previewPersona.textContent = data.persona || 'No persona set';
+                previewInstructions.textContent = data.instructions || 'No instructions set';
+                previewInfo.textContent = data.info || 'No additional info';
+                
+                // Update examples preview
+                previewExamples.innerHTML = '';
+                if (data.examples && data.examples.length > 0) {
+                    data.examples.forEach(example => {
+                        const exampleElement = document.createElement('div');
+                        exampleElement.className = 'example-preview-item';
+                        exampleElement.textContent = example;
+                        previewExamples.appendChild(exampleElement);
+                    });
+                } else {
+                    previewExamples.innerHTML = '<p class="preview-text">No examples added</p>';
+                }
+            }
+
+            function updateAvatarPreview() {
+                const url = avatarUrlInput.value.trim();
+                avatarPreview.innerHTML = '';
+                
+                if (url) {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.onerror = function() {
+                        avatarPreview.innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user"></i></div>';
+                        avatarUrlInput.value = '';
+                        alert('Could not load image from the provided URL. Please check the link and try again.');
+                    };
+                    avatarPreview.appendChild(img);
+                } else {
+                    avatarPreview.innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user"></i></div>';
+                }
+            }
+
+            function getCharacterData() {
+                const examples = [];
+                document.querySelectorAll('.example-item textarea').forEach(textarea => {
+                    if (textarea.value.trim()) {
+                        examples.push(textarea.value.trim());
+                    }
+                });
+                
+                return {
+                    name: nameInput.value.trim(),
+                    persona: personaInput.value.trim(),
+                    avatar: avatarUrlInput.value.trim(),
+                    instructions: instructionsInput.value.trim(),
+                    examples: examples,
+                    info: infoInput.value.trim()
+                };
+            }
+
+            function loadCharacterData(data) {
+                resetForm();
+                
+                if (data.name) nameInput.value = data.name;
+                if (data.persona) personaInput.value = data.persona;
+                if (data.avatar) avatarUrlInput.value = data.avatar;
+                if (data.instructions) instructionsInput.value = data.instructions;
+                if (data.info) infoInput.value = data.info;
+                
+                if (data.examples && data.examples.length > 0) {
+                    examplesList.innerHTML = '';
+                    data.examples.forEach(example => {
+                        const exampleItem = document.createElement('div');
+                        exampleItem.className = 'example-item';
+                        
+                        const textarea = document.createElement('textarea');
+                        textarea.value = example;
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-example';
+                        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        removeBtn.addEventListener('click', function() {
+                            exampleItem.remove();
+                            updatePreview();
+                        });
+                        
+                        exampleItem.appendChild(textarea);
+                        exampleItem.appendChild(removeBtn);
+                        examplesList.appendChild(exampleItem);
+                        
+                        textarea.addEventListener('input', updatePreview);
+                    });
+                }
+                
+                updatePreview();
+                updateAvatarPreview();
+            }
+
+            function resetForm() {
+                nameInput.value = '';
+                personaInput.value = '';
+                avatarUrlInput.value = '';
+                instructionsInput.value = '';
+                infoInput.value = '';
+                examplesList.innerHTML = '';
+                
+                updatePreview();
+                updateAvatarPreview();
+            }
+
+            // Initialize
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
